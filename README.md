@@ -1,4 +1,4 @@
-# Theo8435
+# By Theo8435
 # 🔑 Collect a Key
 
 A simple browser-based platformer game built with vanilla HTML5 Canvas and JavaScript.
