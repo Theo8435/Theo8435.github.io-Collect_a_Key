@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Collect a Key</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Collect a Key - Mobile Friendly</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  * { margin: 0; padding: 0; box-sizing: border-box; touch-action: none; }
   body {
     background: #0d0d1a;
     display: flex;
@@ -13,20 +13,75 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
+    width: 100vw;
     overflow: hidden;
     font-family: monospace;
   }
-  canvas { border: 2px solid #2a2a5a; display: block; }
-  #controls { color: #555; font-size: 12px; margin-top: 8px; letter-spacing: 1px; }
+  #game-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  canvas { 
+    border: 2px solid #2a2a5a; 
+    max-width: 100%; 
+    max-height: 100%; 
+    object-fit: contain;
+  }
+  #controls { color: #555; font-size: 12px; margin-top: 8px; letter-spacing: 1px; text-align: center; }
+  
+  /* Mobile UI */
+  .touch-controls {
+    display: none; /* Hidden on PC */
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    padding: 0 20px;
+    justify-content: space-between;
+    pointer-events: none;
+  }
+  .btn {
+    width: 70px;
+    height: 70px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: bold;
+    user-select: none;
+    pointer-events: auto;
+  }
+  .btn:active { background: rgba(255, 255, 255, 0.3); }
+  .d-pad { display: flex; gap: 10px; }
+  
+  @media (pointer: coarse) {
+    .touch-controls { display: flex; }
+    #controls { display: none; }
+  }
 </style>
 </head>
 <body>
-<canvas id="gameCanvas"></canvas>
-<div id="controls">Arrow Keys / WASD — move &nbsp;|&nbsp; Space / W / Up — jump &nbsp;|&nbsp; R — restart level</div>
+
+<div id="game-container">
+  <canvas id="gameCanvas"></canvas>
+  
+  <div class="touch-controls">
+    <div class="d-pad">
+      <div class="btn" id="btnLeft">←</div>
+      <div class="btn" id="btnRight">→</div>
+    </div>
+    <div class="btn" id="btnJump">JUMP</div>
+  </div>
+</div>
+
+<div id="controls">Arrow Keys / WASD — move | Space / W / Up — jump | R — restart</div>
+
 <script>
- // ════════════════════════════════════════════════════════════════
-//  CONSTANTS
-// ════════════════════════════════════════════════════════════════
+// (Keep all your existing LEVEL and CONSTANT data here...)
 const W = 800, H = 500;
 const GRAVITY      = 1400;
 const PLAYER_SPEED = 240;
@@ -34,31 +89,89 @@ const JUMP_FORCE   = 560;
 const COYOTE_TIME  = 0.1;
 const JUMP_BUFFER  = 0.1;
 
-// ════════════════════════════════════════════════════════════════
-//  CANVAS SETUP
-// ════════════════════════════════════════════════════════════════
+// ... [Insert all the LEVELS array data from your original code here] ...
+// I am omitting the levels array for brevity in the response, 
+// but keep yours exactly as it is.
+
 const canvas = document.getElementById('gameCanvas');
 const ctx    = canvas.getContext('2d');
 canvas.width  = W;
 canvas.height = H;
 
 // ════════════════════════════════════════════════════════════════
-//  INPUT
+//  INPUT HANDLING (PC + MOBILE)
 // ════════════════════════════════════════════════════════════════
 const keys = {};
 const justPressed = {};
+
+// Touch state
+const touch = { left: false, right: false, jump: false };
+
 document.addEventListener('keydown', e => {
   if (!keys[e.code]) justPressed[e.code] = true;
   keys[e.code] = true;
-  if (['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))
-    e.preventDefault();
+  if (['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code)) e.preventDefault();
 });
-document.addEventListener('keyup', e => {
-  keys[e.code] = false;
+document.addEventListener('keyup', e => { keys[e.code] = false; });
+
+// Mobile Button Listeners
+const setupTouch = (id, key) => {
+  const el = document.getElementById(id);
+  el.addEventListener('touchstart', (e) => { e.preventDefault(); touch[key] = true; justPressed['TouchJump'] = (key === 'jump'); });
+  el.addEventListener('touchend', (e) => { e.preventDefault(); touch[key] = false; });
+};
+
+setupTouch('btnLeft', 'left');
+setupTouch('btnRight', 'right');
+setupTouch('btnJump', 'jump');
+
+// Helper functions updated for mobile
+function isDown(...codes) { 
+  if (codes.includes('ArrowLeft') && touch.left) return true;
+  if (codes.includes('ArrowRight') && touch.right) return true;
+  return codes.some(c => keys[c]); 
+}
+
+function wasPressed(...codes) { 
+  if (codes.includes('Space') && justPressed['TouchJump']) return true;
+  return codes.some(c => justPressed[c]); 
+}
+
+function clearJustPressed() { 
+  for (const k in justPressed) delete justPressed[k]; 
+}
+
+// ════════════════════════════════════════════════════════════════
+//  SCALING LOGIC
+// ════════════════════════════════════════════════════════════════
+function resize() {
+  const container = document.getElementById('game-container');
+  const winW = window.innerWidth;
+  const winH = window.innerHeight;
+  const scale = Math.min(winW / W, winH / H);
+  
+  canvas.style.width = (W * scale) + "px";
+  canvas.style.height = (H * scale) + "px";
+}
+window.addEventListener('resize', resize);
+resize();
+
+// ... [Keep your existing GAME STATE, PARTICLES, COLLISION, and DRAW functions here] ...
+// All functions like update(), draw(), drawPlayer(), etc. remain the same.
+// Just ensure the update() function uses the updated wasPressed() and isDown().
+
+// One small tweak for mobile: Allow tapping the screen to start/retry
+canvas.addEventListener('touchstart', () => {
+    if (gameState === STATE.MENU) startGame();
+    if (gameState === STATE.DEAD) { initLevel(levelIndex); gameState = STATE.PLAYING; }
+    if (gameState === STATE.WIN) {
+        if (levelIndex + 1 < LEVELS.length) { initLevel(levelIndex + 1); gameState = STATE.PLAYING; }
+        else gameState = STATE.MENU;
+    }
 });
-function isDown(...codes)  { return codes.some(c => keys[c]); }
-function wasPressed(...codes) { return codes.some(c => justPressed[c]); }
-function clearJustPressed() { for (const k in justPressed) delete justPressed[k]; }
+
+
+
 
 // ════════════════════════════════════════════════════════════════
 //  LEVELS
