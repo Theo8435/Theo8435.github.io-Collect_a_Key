@@ -29,7 +29,7 @@ Grab a key. Open the door. Escape!
 
 ## 🏆 Goal
 
-- **Find the golden key** hidden on each level
+- **Find the golden key** in each level
 - **Reach the EXIT door** after collecting it
 - **Avoid red spikes** and don't fall off the screen
 - Collect **coins** for bonus points
@@ -52,7 +52,7 @@ Grab a key. Open the door. Escape!
 
 ```
 collect-a-key/
-└── collect-a-key.html   ← The entire game in one file!
+└── index.html   ← The entire game in one file!
 ```
 
 ---
@@ -67,7 +67,16 @@ collect-a-key/
 
 ## 📸 Preview
 
-> Open `collect-a-key.html` in your browser to see it in action!
+> Open `index.html` in your browser to see it in action!
+
+---
+
+## 🕓 More Thing Soon
+
+- More level
+- Power up
+- Level editor
+- And much more!
 
 ---
 
