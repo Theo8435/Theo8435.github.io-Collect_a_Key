@@ -6,73 +6,56 @@ const JUMP_FORCE   = 560;
 const COYOTE_TIME  = 0.1;
 const JUMP_BUFFER  = 0.1;
 
+// ... [Insert all the LEVELS array data from your original code here] ...
+// I am omitting the levels array for brevity in the response, 
+// but keep yours exactly as it is.
+
 const canvas = document.getElementById('gameCanvas');
 const ctx    = canvas.getContext('2d');
 canvas.width  = W;
 canvas.height = H;
 
 // ════════════════════════════════════════════════════════════════
-//  INPUT HANDLING
+//  INPUT HANDLING (PC + MOBILE)
 // ════════════════════════════════════════════════════════════════
-canvas.addEventListener('mousedown', handlePointer);
-canvas.addEventListener('touchstart', (e) => {
-    // Only handle touch as a click if it's not on the UI buttons
-    if (e.target === canvas) {
-        const rect = canvas.getBoundingClientRect();
-        const touchX = (e.touches[0].clientX - rect.left) * (W / rect.width);
-        const touchY = (e.touches[0].clientY - rect.top) * (H / rect.height);
-        handlePointer({ offsetX: touchX, offsetY: touchY, isRaw: true });
-    }
+const keys = {};
+const justPressed = {};
+
+// Touch state
+const touch = { left: false, right: false, jump: false };
+
+document.addEventListener('keydown', e => {
+  if (!keys[e.code]) justPressed[e.code] = true;
+  keys[e.code] = true;
+  if (['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code)) e.preventDefault();
 });
+document.addEventListener('keyup', e => { keys[e.code] = false; });
 
-function handlePointer(e) {
-    let mouseX, mouseY;
-    
-    // Scale coordinate logic
-    if (e.isRaw) {
-        mouseX = e.offsetX;
-        mouseY = e.offsetY;
-    } else {
-        const rect = canvas.getBoundingClientRect();
-        mouseX = (e.clientX - rect.left) * (W / rect.width);
-        mouseY = (e.clientY - rect.top) * (H / rect.height);
-    }
+// Mobile Button Listeners
+const setupTouch = (id, key) => {
+  const el = document.getElementById(id);
+  el.addEventListener('touchstart', (e) => { e.preventDefault(); touch[key] = true; justPressed['TouchJump'] = (key === 'jump'); });
+  el.addEventListener('touchend', (e) => { e.preventDefault(); touch[key] = false; });
+};
 
-    if (gameState === STATE.MENU) {
-        gameState = STATE.LEVEL_SELECT;
-    } else if (gameState === STATE.LEVEL_SELECT) {
-        checkLevelSelectClick(mouseX, mouseY);
-    } else if (gameState === STATE.DEAD) {
-        initLevel(levelIndex);
-        gameState = STATE.PLAYING;
-    } else if (gameState === STATE.WIN) {
-        if (levelIndex + 1 < LEVELS.length) {
-            initLevel(levelIndex + 1);
-            gameState = STATE.PLAYING;
-        } else {
-            gameState = STATE.MENU;
-        }
-    }
+setupTouch('btnLeft', 'left');
+setupTouch('btnRight', 'right');
+setupTouch('btnJump', 'jump');
+
+// Helper functions updated for mobile
+function isDown(...codes) { 
+  if (codes.includes('ArrowLeft') && touch.left) return true;
+  if (codes.includes('ArrowRight') && touch.right) return true;
+  return codes.some(c => keys[c]); 
 }
 
-function checkLevelSelectClick(x, y) {
-    const cols = 5;
-    const size = 60;
-    const gap = 20;
-    const startX = W / 2 - ((cols * size + (cols - 1) * gap) / 2);
-    const startY = 160;
+function wasPressed(...codes) { 
+  if (codes.includes('Space') && justPressed['TouchJump']) return true;
+  return codes.some(c => justPressed[c]); 
+}
 
-    LEVELS.forEach((_, i) => {
-        const col = i % cols;
-        const row = Math.floor(i / cols);
-        const bx = startX + col * (size + gap);
-        const by = startY + row * (size + gap);
-
-        if (x > bx && x < bx + size && y > by && y < by + size) {
-            initLevel(i);
-            gameState = STATE.PLAYING;
-        }
-    });
+function clearJustPressed() { 
+  for (const k in justPressed) delete justPressed[k]; 
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -328,15 +311,11 @@ const LEVELS = [
     coins: [{ x: 75,  y: 410 }, { x: 700, y: 410 }],
   },
 ];
+
 // ════════════════════════════════════════════════════════════════
 //  GAME STATE
 // ════════════════════════════════════════════════════════════════
-const STATE = { 
-    MENU: 'menu',  
-    PLAYING: 'playing', 
-    WIN: 'win', 
-    DEAD: 'dead' 
-};
+const STATE = { MENU: 'menu', PLAYING: 'playing', WIN: 'win', DEAD: 'dead' };
 let gameState = STATE.MENU;
 
 let levelIndex = 0;
@@ -481,7 +460,6 @@ function update(dt) {
     clearJustPressed();
     return;
   }
-
 
   if (gameState === STATE.DEAD) {
     updateParticles(dt);
@@ -635,9 +613,6 @@ function drawBg(idx) {
     ctx.fill();
   }
 }
-
-
-
 
 function drawPlatforms() {
   for (const p of platforms) {
@@ -864,8 +839,6 @@ function drawMenu() {
   ctx.fillText(LEVELS.length + ' levels  |  Collect coins for bonus points', W/2, H/2 + 100);
 }
 
-
-
 function drawWinScreen() {
   drawBg(levelIndex);
   drawPlatforms();
@@ -940,11 +913,12 @@ function drawDeadScreen() {
 //  MAIN DRAW
 // ════════════════════════════════════════════════════════════════
 function draw() {
-    ctx.clearRect(0, 0, W, H);
-    if (gameState === STATE.MENU) { drawMenu(); return; }
-    if (gameState === STATE.LEVEL_SELECT) { drawLevelSelect(); return; } // Added this
-    if (gameState === STATE.WIN) { drawWinScreen(); return; }
-    if (gameState === STATE.DEAD) { drawDeadScreen(); return; }
+  ctx.clearRect(0, 0, W, H);
+
+  if (gameState === STATE.MENU) { drawMenu(); return; }
+  if (gameState === STATE.WIN)  { drawWinScreen(); return; }
+  if (gameState === STATE.DEAD) { drawDeadScreen(); return; }
+
   // PLAYING
   drawBg(levelIndex);
   drawPlatforms();
