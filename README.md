@@ -45,6 +45,7 @@ Grab a key. Open the door. Escape!
 - Score system with time bonuses
 - Death counter to track your runs
 - Runs entirely in the browser — no server needed
+- Mobile friendly.
 
 ---
 
@@ -76,6 +77,7 @@ collect_a_key/
 - More level
 - Power up
 - Level editor
+- Main menu
 - And much more!
 
 ---
