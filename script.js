@@ -228,7 +228,6 @@ const LEVELS = [
     ],
     spikes: [
       { x: 170, y: 233, w: 28, h: 17 },
-      { x: 430, y: 233, w: 28, h: 17 },
     ],
     coins: [{ x: 65,  y: 390 }, { x: 345, y: 300 }, { x: 605, y: 140 }],
   },
@@ -339,7 +338,7 @@ const LEVELS = [
   {
     bgTop: '#1a0a0a', bgBot: '#0d0505',
     playerStart: { x: 30, y: 80 },
-    door:        { x: 710, y: 80 },
+    door:        { x: 710, y: 432 },
     key:         { x: 390, y: 430 },
     platforms: [
       { x: 0,   y: 110, w: 130, h: 16 },
@@ -435,8 +434,8 @@ const LEVELS = [
   // ── Level 16: Spike Alley ─────────────────────────────────────
   {
     bgTop: '#200010', bgBot: '#100008',
-    playerStart: { x: 30, y: 390 },
-    door:        { x: 715, y: 390 },
+    playerStart: { x: 30, y: 300 },
+    door:        { x: 450, y: 390 },
     key:         { x: 390, y: 90 },
     platforms: [
       { x: 0,   y: 440, w: 130, h: 60 },
@@ -450,8 +449,6 @@ const LEVELS = [
       { x: 720, y: 320, w: 80,  h: 16 },
     ],
     spikes: [
-      { x: 80,  y: 303, w: 56, h: 17 },
-      { x: 220, y: 223, w: 56, h: 17 },
       { x: 520, y: 223, w: 56, h: 17 },
       { x: 660, y: 303, w: 56, h: 17 },
     ],
@@ -488,7 +485,7 @@ const LEVELS = [
     bgTop: '#10001a', bgBot: '#08000d',
     playerStart: { x: 30, y: 80 },
     door:        { x: 715, y: 80 },
-    key:         { x: 390, y: 400 },
+    key:         { x: 390, y: 355 },
     platforms: [
       { x: 0,   y: 110, w: 130, h: 16 },
       { x: 670, y: 110, w: 130, h: 16 },
@@ -555,7 +552,6 @@ const LEVELS = [
     spikes: [
       { x: 180, y: 293, w: 36, h: 17 },
       { x: 300, y: 233, w: 36, h: 17 },
-      { x: 420, y: 173, w: 36, h: 17 },
     ],
     coins: [{ x: 55, y: 415 }, { x: 400, y: 105 }, { x: 735, y: 415 }],
   },
@@ -1928,6 +1924,7 @@ function drawMenu() {
   ctx.fillRect(kx + 15, ky - 4, 30, 7);
   ctx.fillRect(kx + 33, ky + 3, 7, 9);
   ctx.fillRect(kx + 41, ky + 3, 7, 12);
+
   ctx.restore();
 
   ctx.font = 'bold 34px monospace';
