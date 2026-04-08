@@ -332,8 +332,7 @@ const LEVELS = [
 //  GAME STATE
 // ════════════════════════════════════════════════════════════════
 const STATE = { 
-    MENU: 'menu', 
-    LEVEL_SELECT: 'level_select', 
+    MENU: 'menu',  
     PLAYING: 'playing', 
     WIN: 'win', 
     DEAD: 'dead' 
@@ -483,13 +482,6 @@ function update(dt) {
     return;
   }
 
-  if (gameState === STATE.MENU || gameState === STATE.LEVEL_SELECT) {
-        if (wasPressed('Space', 'Enter')) {
-            if (gameState === STATE.MENU) gameState = STATE.LEVEL_SELECT;
-        }
-        clearJustPressed();
-        return;
-  }
 
   if (gameState === STATE.DEAD) {
     updateParticles(dt);
