@@ -3,7 +3,7 @@
 
 A simple browser-based platformer game built with vanilla HTML5 Canvas and JavaScript.
 
-Find the golden key, unlock the door, and escape — across 10 increasingly tricky levels!
+Find the golden key, unlock the door, and escape — across 50 increasingly tricky levels!
 
 Grab a key. Open the door. Escape!
 
@@ -39,7 +39,7 @@ Grab a key. Open the door. Escape!
 
 ## ✨ Features
 
-- 10 levels of increasing difficulty
+- 50 levels of increasing difficulty
 - Smooth physics with gravity, coyote time, and jump buffering
 - Particle effects on key pickup, coin collection, and death
 - Score system with time bonuses
