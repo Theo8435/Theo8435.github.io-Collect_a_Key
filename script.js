@@ -1032,6 +1032,7 @@ function update(dt) {
     if (wasPressed('ArrowRight','KeyD')) {
       if (lsCursor + 1 < LEVELS.length && lsCursor % LS_COLS < LS_COLS - 1) {
         lsCursor++; moved = true;
+        SFX.coin();
       }
     }
     if (wasPressed('ArrowLeft','KeyA')) {
@@ -1055,14 +1056,14 @@ function update(dt) {
 
     if (wasPressed('Space','Enter')) {
       if (lsCursor <= unlockedUpTo) {
-        SFX.menuClick();
+        SFX.coin();
         startGame(lsCursor);
       } else {
         SFX.die(); // locked buzz
       }
     }
     if (wasPressed('Escape','KeyQ')) {
-      SFX.menuNav();
+      SFX.key();
       gameState = STATE.MENU;
     }
     clearJustPressed();
