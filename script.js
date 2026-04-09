@@ -1288,7 +1288,7 @@ function drawHUD() {
     ctx.font = '12px monospace';
     ctx.fillText('A,D or left,right arrow key to move. W,up arrow,space to jump. Get the key!', W/2, H - 10);
   }
-    if (hasKey) {
+  else{
     ctx.textAlign = 'center';
     ctx.fillStyle = '#ffd60a';
     ctx.font = '12px monospace';
