@@ -1032,21 +1032,24 @@ function update(dt) {
     if (wasPressed('ArrowRight','KeyD')) {
       if (lsCursor + 1 < LEVELS.length && lsCursor % LS_COLS < LS_COLS - 1) {
         lsCursor++; moved = true;
+        SFX.coin();
       }
     }
     if (wasPressed('ArrowLeft','KeyA')) {
       if (lsCursor - 1 >= 0 && lsCursor % LS_COLS > 0) {
         lsCursor--; moved = true;
+        SFX.coin();
       }
     }
     if (wasPressed('ArrowDown')) {
       if (lsCursor + LS_COLS < LEVELS.length) { lsCursor += LS_COLS; moved = true; }
+      SFX.coin();
     }
     if (wasPressed('ArrowUp')) {
       if (lsCursor - LS_COLS >= 0) { lsCursor -= LS_COLS; moved = true; }
+      SFX.coin();
     }
     if (moved) {
-      SFX.coin();
       // auto-scroll
       const newRow = Math.floor(lsCursor / LS_COLS);
       if (newRow < lsScroll) lsScroll = newRow;
