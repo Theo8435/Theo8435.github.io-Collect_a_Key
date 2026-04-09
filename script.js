@@ -1032,7 +1032,6 @@ function update(dt) {
     if (wasPressed('ArrowRight','KeyD')) {
       if (lsCursor + 1 < LEVELS.length && lsCursor % LS_COLS < LS_COLS - 1) {
         lsCursor++; moved = true;
-        SFX.coin();
       }
     }
     if (wasPressed('ArrowLeft','KeyA')) {
@@ -1047,7 +1046,7 @@ function update(dt) {
       if (lsCursor - LS_COLS >= 0) { lsCursor -= LS_COLS; moved = true; }
     }
     if (moved) {
-      SFX.menuNav();
+      SFX.coin();
       // auto-scroll
       const newRow = Math.floor(lsCursor / LS_COLS);
       if (newRow < lsScroll) lsScroll = newRow;
@@ -1056,14 +1055,14 @@ function update(dt) {
 
     if (wasPressed('Space','Enter')) {
       if (lsCursor <= unlockedUpTo) {
-        SFX.coin();
+        SFX.levelWin();
         startGame(lsCursor);
       } else {
         SFX.die(); // locked buzz
       }
     }
     if (wasPressed('Escape','KeyQ')) {
-      SFX.key();
+      SFX.menuNav();
       gameState = STATE.MENU;
     }
     clearJustPressed();
