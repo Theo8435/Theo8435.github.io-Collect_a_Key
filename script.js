@@ -965,7 +965,7 @@ function update(dt) {
 
   if (gameState === STATE.DEAD) {
     updateParticles(dt);
-    if (wasPressed('Space','Enter','KeyR')) {
+    if (wasPressed('Space','Enter','KeyR','ArrowUp','KeyW')) {
       initLevel(levelIndex);
       gameState = STATE.PLAYING;
     }
